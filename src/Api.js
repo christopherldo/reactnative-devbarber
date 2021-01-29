@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
-const BASE_API = 'https://ced015b7c677.ngrok.io';
+const BASE_API = 'https://412515aae257.ngrok.io';
 
 export default {
-  checkToken: async (token) => {
+  checkToken: async () => {
+    const token = await AsyncStorage.getItem('token');
+
     const req = await fetch(`${BASE_API}/auth/refresh`, {
       method: 'POST',
       headers: {
@@ -50,7 +52,6 @@ export default {
 
   getBarbers: async (lat, lng, city, distance, offset) => {
     const token = await AsyncStorage.getItem('token');
-    // lat=${lat}&lng=${lng}&distance=${distance}&offset=${offset}
 
     if (offset === undefined) {
       offset = 0;
@@ -68,7 +69,44 @@ export default {
       queryString += `&distance=${distance}`;
     }
 
+    console.log(lat);
+    console.log(lng);
+
     const req = await fetch(`${BASE_API}/barbers?${queryString}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const json = await req.json();
+
+    return json;
+  },
+
+  logout: async () => {
+    const token = await AsyncStorage.getItem('token');
+
+    const req = await fetch(`${BASE_API}/auth/logout`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({token}),
+    });
+
+    const json = await req.json();
+
+    return json;
+  },
+
+  getBarber: async (id) => {
+    const token = await AsyncStorage.getItem('token');
+
+    const req = await fetch(`${BASE_API}/barber/${id}`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

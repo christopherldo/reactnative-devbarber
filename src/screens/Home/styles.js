@@ -59,3 +59,10 @@ export const ListArea = styled.View`
   margin-top: 10px;
   margin-bottom: 50px;
 `;
+
+export const NoBarberAlert = styled.Text`
+  text-align: center;
+  font-size: 20px;
+  margin-top: 20px;
+  color: #fff;
+`;

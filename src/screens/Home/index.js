@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Platform, RefreshControl, StatusBar} from 'react-native';
+import NavigationBar from 'react-native-navbar-color';
 import {useNavigation} from '@react-navigation/native';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import Geolocation from '@react-native-community/geolocation';
@@ -17,6 +18,7 @@ import {
   LocationFinder,
   LoadingIcon,
   ListArea,
+  NoBarberAlert,
 } from './styles';
 
 import BarberItem from '../../components/BarberItem';
@@ -28,12 +30,11 @@ export default () => {
   const navigation = useNavigation();
 
   const [locationText, setLocationText] = useState('');
-  const [coords, setCoords] = useState(null);
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState([]);
+  const [showList, setShowList] = useState(true);
 
   const handleLocationFinder = async () => {
-    setCoords(null);
     setLocationText('');
 
     // console.log(city);
@@ -56,7 +57,6 @@ export default () => {
 
     if (result === 'granted') {
       Geolocation.getCurrentPosition((info) => {
-        setCoords(info.coords);
         getBarbers(info.coords.latitude, info.coords.longitude);
       });
     } else {
@@ -64,8 +64,9 @@ export default () => {
     }
   };
 
-  const getBarbers = async (latitude = null, longitude = null) => {
+  const getBarbers = async (latitude, longitude, location = false) => {
     setLoading(true);
+    setShowList(true);
     setList([]);
 
     let [lat, lng, city, distance, offset] = '';
@@ -78,10 +79,19 @@ export default () => {
       lng = longitude;
     }
 
+    if (location) {
+      city = locationText;
+    }
+
     let res = await Api.getBarbers(lat, lng, city, distance, offset);
 
     if (res.error === '') {
       setList(res.data);
+
+      if (Object.keys(res.data).length === 0) {
+        setShowList(false);
+      }
+
       setLocationText(res.location);
     } else {
       alert(JSON.stringify(res.error));
@@ -92,15 +102,19 @@ export default () => {
 
   useEffect(() => {
     handleLocationFinder();
+    NavigationBar.setColor('#4eadbe');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onRefresh = () => {
     handleLocationFinder();
   };
 
+  const handleLocationSearch = () => {
+    getBarbers('', '', true);
+  };
   return (
     <Container>
-      <StatusBar backgroundColor="#63c2d1" barStyle="dark-content" />
+      <StatusBar backgroundColor="#63c2d1" barStyle="light-content" />
       <Scroller
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={onRefresh} />
@@ -121,6 +135,7 @@ export default () => {
             placeholderTextColor="#fff"
             value={locationText}
             onChangeText={(t) => setLocationText(t)}
+            onEndEditing={handleLocationSearch}
           />
 
           <LocationFinder onPress={handleLocationFinder}>
@@ -131,9 +146,13 @@ export default () => {
         {loading && <LoadingIcon size="large" color="#fff" />}
 
         <ListArea>
-          {list.map((item, k) => (
-            <BarberItem key={k} data={item} />
-          ))}
+          {showList ? (
+            list.map((item, k) => <BarberItem key={k} data={item} />)
+          ) : (
+            <NoBarberAlert>
+              Ainda não há barbeiros em sua região :/
+            </NoBarberAlert>
+          )}
         </ListArea>
       </Scroller>
     </Container>

@@ -7247,6 +7247,11 @@ react-native-iphone-x-helper@^1.3.0:
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
 
+react-native-navbar-color@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-navbar-color/-/react-native-navbar-color-1.0.3.tgz#b796e728226804d405335df53a64a9ed4091d5a6"
+  integrity sha512-VAouso41MWDFC+mLPJmgIaH/B2352MnEgCrqzwDCKf43+nfk7O5FuqtLN9pWKEvX06laSTQPdqy5Arln/GH0Pg==
+
 react-native-permissions@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-3.0.0.tgz#d9d107700741d41f8392f202f35a61f481fb0e68"
