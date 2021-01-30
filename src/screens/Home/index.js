@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Platform, RefreshControl, StatusBar} from 'react-native';
-import NavigationBar from 'react-native-navbar-color';
+import {Platform, RefreshControl} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import Geolocation from '@react-native-community/geolocation';
@@ -102,7 +101,6 @@ export default () => {
 
   useEffect(() => {
     handleLocationFinder();
-    NavigationBar.setColor('#4eadbe');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onRefresh = () => {
@@ -114,7 +112,6 @@ export default () => {
   };
   return (
     <Container>
-      <StatusBar backgroundColor="#63c2d1" barStyle="light-content" />
       <Scroller
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={onRefresh} />

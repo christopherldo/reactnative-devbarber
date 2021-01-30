@@ -4,6 +4,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
 
 import Stars from '../../components/Stars';
+import BarberModal from '../../components/BarberModal';
 
 import Api from '../../Api';
 
@@ -18,14 +19,31 @@ import {
   PageBody,
   UserInfoArea,
   ServiceArea,
-  TestimonialArea,
   UserAvatar,
   UserInfo,
   UserInfoName,
   UserFavButton,
+  BackButton,
+  LoadingIcon,
+  ServicesTitle,
+  ServiceItem,
+  ServiceInfo,
+  ServiceName,
+  ServicePrice,
+  ServiceChooseButton,
+  ServiceChooseButtonText,
+  TestimonialArea,
+  TestimonialItem,
+  TestimonialInfo,
+  TestimonialName,
+  TestimonialBody,
 } from './styles';
 
 import FavoriteIcon from '../../assets/favorite.svg';
+import FavoriteFullIcon from '../../assets/favorite_full.svg';
+import BackIcon from '../../assets/back.svg';
+import NavPrevIcon from '../../assets/nav_prev.svg';
+import NavNextIcon from '../../assets/nav_next.svg';
 
 export default () => {
   const navigation = useNavigation();
@@ -39,6 +57,10 @@ export default () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [showTestimonials, setShowTestimonials] = useState(false);
+  const [favorited, setFavorited] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const getBarberInfo = async () => {
@@ -48,6 +70,11 @@ export default () => {
 
       if (json.error === '') {
         setUserInfo(json.data);
+        setFavorited(json.data.favorited);
+
+        if (Object.keys(json.data).length > 0) {
+          setShowTestimonials(true);
+        }
       } else {
         alert(JSON.stringify(json.error));
       }
@@ -55,7 +82,29 @@ export default () => {
       setLoading(false);
     };
     getBarberInfo();
-  }, [userInfo.public_id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleBackButton = () => {
+    navigation.goBack();
+  };
+
+  const handleFavClick = async () => {
+    setFavorited(!favorited);
+
+    let json = await Api.toggleFavorite(userInfo.public_id);
+
+    if (json.error === '') {
+      setFavorited(json.data.have);
+    } else {
+      setFavorited(!favorited);
+    }
+  };
+
+  const handleServiceChoose = (key) => {
+    setSelectedService(key);
+    setShowModal(true);
+  };
 
   return (
     <Container>
@@ -73,12 +122,12 @@ export default () => {
             activeDot={<SwipeDotActive />}
             // eslint-disable-next-line react-native/no-inline-styles
             paginationStyle={{
-              top: 30,
+              top: StatusBar.currentHeight + 15,
               right: 15,
               bottom: null,
               left: null,
             }}
-            autoplay={true}>
+            autoplay>
             {userInfo.photos.map((item, key) => (
               <SwipeItem key={key}>
                 <SwipeImage source={{uri: item.url}} resizeMode="cover" />
@@ -97,16 +146,73 @@ export default () => {
               <Stars stars={userInfo.stars} showNumber />
             </UserInfo>
 
-            <UserFavButton>
-              <FavoriteIcon width="24" height="24" fill="#F00" />
+            <UserFavButton onPress={handleFavClick}>
+              {favorited ? (
+                <FavoriteFullIcon width="24" height="24" fill="#F00" />
+              ) : (
+                <FavoriteIcon width="24" height="24" fill="#F00" />
+              )}
             </UserFavButton>
           </UserInfoArea>
 
-          <ServiceArea />
+          {loading && <LoadingIcon size="large" color="#000" />}
 
-          <TestimonialArea />
+          <ServiceArea>
+            {userInfo.services && (
+              <ServicesTitle>Lista de serviços</ServicesTitle>
+            )}
+            {userInfo.services &&
+              userInfo.services.map((item, key) => (
+                <ServiceItem key={key}>
+                  <ServiceInfo>
+                    <ServiceName>{item.name}</ServiceName>
+                    <ServicePrice>R$ {item.price}</ServicePrice>
+                  </ServiceInfo>
+
+                  <ServiceChooseButton onPress={() => handleServiceChoose(key)}>
+                    <ServiceChooseButtonText>Agendar</ServiceChooseButtonText>
+                  </ServiceChooseButton>
+                </ServiceItem>
+              ))}
+          </ServiceArea>
+
+          {showTestimonials && (
+            <TestimonialArea>
+              <Swiper
+                // eslint-disable-next-line react-native/no-inline-styles
+                style={{height: 110}}
+                showsPagination={false}
+                showsButtons
+                prevButton={<NavPrevIcon with="35" height="35" fill="#000" />}
+                nextButton={<NavNextIcon with="35" height="35" fill="#000" />}
+                autoplay
+                autoplayTimeout={6}>
+                {userInfo.testimonials.map((item, key) => (
+                  <TestimonialItem key={key}>
+                    <TestimonialInfo>
+                      <TestimonialName>{item.name}</TestimonialName>
+                      <Stars stars={item.rate} showNumber={false} />
+                    </TestimonialInfo>
+
+                    <TestimonialBody>{item.body}</TestimonialBody>
+                  </TestimonialItem>
+                ))}
+              </Swiper>
+            </TestimonialArea>
+          )}
         </PageBody>
       </Scroller>
+
+      <BackButton onPress={handleBackButton}>
+        <BackIcon width="44" height="44" fill="#fff" />
+      </BackButton>
+
+      <BarberModal
+        show={showModal}
+        setShow={setShowModal}
+        user={userInfo}
+        service={selectedService}
+      />
     </Container>
   );
 };

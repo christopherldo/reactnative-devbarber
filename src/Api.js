@@ -69,9 +69,6 @@ export default {
       queryString += `&distance=${distance}`;
     }
 
-    console.log(lat);
-    console.log(lng);
-
     const req = await fetch(`${BASE_API}/barbers?${queryString}`, {
       method: 'GET',
       headers: {
@@ -113,6 +110,23 @@ export default {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
+    });
+
+    const json = await req.json();
+
+    return json;
+  },
+
+  toggleFavorite: async (barber) => {
+    const token = await AsyncStorage.getItem('token');
+
+    const req = await fetch(`${BASE_API}/user/favorite`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({token, barber}),
     });
 
     const json = await req.json();

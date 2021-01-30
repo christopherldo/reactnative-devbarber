@@ -1,8 +1,10 @@
 import styled from 'styled-components/native';
+import {StatusBar} from 'react-native';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
   background-color: #63c2d1;
+  padding-top: ${StatusBar.currentHeight}px;
 `;
 
 export const Scroller = styled.ScrollView`
