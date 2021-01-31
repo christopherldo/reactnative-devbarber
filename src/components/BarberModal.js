@@ -73,7 +73,6 @@ const ServicePrice = styled.Text`
 const FinishButton = styled.TouchableOpacity`
   height: 60px;
   margin-top: 15px;
-  background-color: #268596;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
@@ -179,7 +178,7 @@ export default ({show, setShow, user, service, serviceId}) => {
   const [selectedHour, setSelectedHour] = useState(null);
   const [listDays, setListDays] = useState([]);
   const [listHours, setListHours] = useState([]);
-  const [showFinishButton, setShowFinishButton] = useState(false);
+  const [finishButtonActive, setFinishButtonActive] = useState(false);
 
   useEffect(() => {
     setBlackStatus(!blackStatus);
@@ -324,19 +323,6 @@ export default ({show, setShow, user, service, serviceId}) => {
     setSelectedHour(null);
   }, [selectedDay, selectedMonth, selectedYear, user, listDays]);
 
-  useEffect(() => {
-    if (
-      selectedYear > 0 &&
-      selectedMonth >= 0 &&
-      selectedDay > 0 &&
-      selectedHour !== null
-    ) {
-      setShowFinishButton(true);
-    } else {
-      setShowFinishButton(false);
-    }
-  }, [selectedDay, selectedHour, selectedMonth, selectedYear]);
-
   const handleCloseButton = () => {
     setShow(false);
     setSelectedYear(0);
@@ -346,20 +332,6 @@ export default ({show, setShow, user, service, serviceId}) => {
   };
 
   const handleFinishClick = async () => {
-    let hour = selectedHour.split(':');
-    let formattedHour = Number(hour[0]);
-    let formattedMinutes = Number(hour[1]);
-
-    let now = new Date();
-    let nowYear = now.getFullYear();
-    let nowMonth = now.getMonth() + 1;
-    let nowDay = now.getDate();
-
-    nowMonth = nowMonth < 10 ? '0' + nowMonth : nowMonth;
-    nowDay = nowDay < 10 ? '0' + nowDay : nowDay;
-
-    let formattedNow = `${nowYear}-${nowMonth}-${nowDay}`;
-
     if (
       user.public_id &&
       serviceId !== null &&
@@ -368,6 +340,26 @@ export default ({show, setShow, user, service, serviceId}) => {
       selectedDay > 0 &&
       selectedHour !== null
     ) {
+      let hour = selectedHour.split(':');
+      let formattedHour = Number(hour[0]);
+      let formattedMinutes = Number(hour[1]);
+
+      let now = new Date();
+      let nowYear = now.getFullYear();
+      let nowMonth = now.getMonth() + 1;
+      let nowDay = now.getDate();
+      let nowHour = now.getHours();
+      let nowMinutes = now.getMinutes();
+      let nowSeconds = now.getSeconds();
+
+      nowMonth = nowMonth < 10 ? '0' + nowMonth : nowMonth;
+      nowDay = nowDay < 10 ? '0' + nowDay : nowDay;
+      nowHour = nowHour < 10 ? '0' + nowHour : nowHour;
+      nowMinutes = nowMinutes < 10 ? '0' + nowMinutes : nowMinutes;
+      nowSeconds = nowSeconds < 10 ? '0' + nowSeconds : nowSeconds;
+
+      let formattedNow = `${nowYear}-${nowMonth}-${nowDay} ${nowHour}:${nowMinutes}:${nowSeconds}`;
+
       let res = await Api.setAppointment(
         user.public_id,
         serviceId,
@@ -398,6 +390,7 @@ export default ({show, setShow, user, service, serviceId}) => {
       setSelectedYear(mountDate.getFullYear());
       setSelectedMonth(mountDate.getMonth());
       setSelectedDay(0);
+      setFinishButtonActive(false);
     }
   };
 
@@ -412,7 +405,22 @@ export default ({show, setShow, user, service, serviceId}) => {
       setSelectedYear(mountDate.getFullYear());
       setSelectedMonth(mountDate.getMonth());
       setSelectedDay(0);
+      setFinishButtonActive(false);
     }
+  };
+
+  const handleDateItem = (item) => {
+    if (item.status) {
+      if (selectedDay !== item.number) {
+        setSelectedDay(item.number);
+        setFinishButtonActive(false);
+      }
+    }
+  };
+
+  const handleTimeItem = (item) => {
+    setSelectedHour(item);
+    setFinishButtonActive(true);
   };
 
   return (
@@ -422,7 +430,11 @@ export default ({show, setShow, user, service, serviceId}) => {
         backgroundColor={blackStatus ? 'rgba(0,0,0,0.5)' : 'transparent'}
         barStyle="light-content"
       />
-      <Modal transparent={true} visible={show} animationType="slide">
+      <Modal
+        transparent={true}
+        visible={show}
+        animationType="slide"
+        onRequestClose={() => setShow(false)}>
         <ModalArea>
           <ModalBody>
             <CloseButton onPress={handleCloseButton}>
@@ -475,25 +487,35 @@ export default ({show, setShow, user, service, serviceId}) => {
                 {listDays.map((item, key) => (
                   <DateItem
                     key={key}
-                    onPress={() => item.status && setSelectedDay(item.number)}
+                    onPress={
+                      () => handleDateItem(item)
+                      // item.status &&
+                      // setSelectedDay(item.number))
+                      // this.setState({setFinishButtonActive: true})
+                    }
                     // eslint-disable-next-line react-native/no-inline-styles
                     style={{
-                      opacity: item.status ? 1 : 0.1,
                       backgroundColor:
                         item.number === selectedDay ? '#4eadbe' : '#fff',
                     }}>
                     <DateItemWeekDay
-                      // eslint-disable-next-line react-native/no-inline-styles
-                      style={{
-                        color: item.number === selectedDay ? '#fff' : '#000',
-                      }}>
+                      style={
+                        item.number === selectedDay
+                          ? {color: '#fff'}
+                          : item.status
+                          ? {color: '#000'}
+                          : {color: 'rgba(0, 0, 0, 0.2)'}
+                      }>
                       {item.weekday}
                     </DateItemWeekDay>
                     <DateItemNumber
-                      // eslint-disable-next-line react-native/no-inline-styles
-                      style={{
-                        color: item.number === selectedDay ? '#fff' : '#000',
-                      }}>
+                      style={
+                        item.number === selectedDay
+                          ? {color: '#fff'}
+                          : item.status
+                          ? {color: '#000'}
+                          : {color: 'rgba(0, 0, 0, 0.2)'}
+                      }>
                       {item.number}
                     </DateItemNumber>
                   </DateItem>
@@ -514,7 +536,7 @@ export default ({show, setShow, user, service, serviceId}) => {
                   {listHours.map((item, key) => (
                     <TimeItem
                       key={key}
-                      onPress={() => setSelectedHour(item)}
+                      onPress={() => handleTimeItem(item)}
                       // eslint-disable-next-line react-native/no-inline-styles
                       style={{
                         backgroundColor:
@@ -533,13 +555,16 @@ export default ({show, setShow, user, service, serviceId}) => {
               </ModalItem>
             )}
 
-            {showFinishButton && (
-              <FinishButton
-                onPress={handleFinishClick}
-                style={{opacity: showFinishButton ? 1 : 0.3}}>
-                <FinishButtonText>Finalizar Agendamento</FinishButtonText>
-              </FinishButton>
-            )}
+            <FinishButton
+              onPress={handleFinishClick}
+              // eslint-disable-next-line react-native/no-inline-styles
+              style={{
+                backgroundColor: finishButtonActive
+                  ? 'rgba(38, 133, 150, 1)'
+                  : 'rgba(38, 133, 150, 0.1)',
+              }}>
+              <FinishButtonText>Finalizar Agendamento</FinishButtonText>
+            </FinishButton>
           </ModalBody>
         </ModalArea>
       </Modal>
