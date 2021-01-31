@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
-const BASE_API = 'https://412515aae257.ngrok.io';
+const BASE_API = 'https://f7f8e9f1a8d4.ngrok.io';
 
 export default {
   checkToken: async () => {
@@ -128,6 +128,35 @@ export default {
       },
       body: JSON.stringify({token, barber}),
     });
+
+    const json = await req.json();
+
+    return json;
+  },
+
+  setAppointment: async (id, service, year, month, day, hour, minutes, now) => {
+    const token = await AsyncStorage.getItem('token');
+
+    month = month + 1;
+
+    const req = await fetch(
+      `${BASE_API}/barber/${id}/appointment?hour=${hour}&minutes=${minutes}`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token,
+          service,
+          year,
+          month,
+          day,
+          now,
+        }),
+      },
+    );
 
     const json = await req.json();
 

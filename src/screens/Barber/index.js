@@ -60,7 +60,9 @@ export default () => {
   const [showTestimonials, setShowTestimonials] = useState(false);
   const [favorited, setFavorited] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const [serviceId, setServiceId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showFavButton, setShowFavButton] = useState(false);
 
   useEffect(() => {
     const getBarberInfo = async () => {
@@ -80,6 +82,7 @@ export default () => {
       }
 
       setLoading(false);
+      setShowFavButton(true);
     };
     getBarberInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,8 +104,9 @@ export default () => {
     }
   };
 
-  const handleServiceChoose = (key) => {
+  const handleServiceChoose = (item, key) => {
     setSelectedService(key);
+    setServiceId(item.public_id);
     setShowModal(true);
   };
 
@@ -146,13 +150,15 @@ export default () => {
               <Stars stars={userInfo.stars} showNumber />
             </UserInfo>
 
-            <UserFavButton onPress={handleFavClick}>
-              {favorited ? (
-                <FavoriteFullIcon width="24" height="24" fill="#F00" />
-              ) : (
-                <FavoriteIcon width="24" height="24" fill="#F00" />
-              )}
-            </UserFavButton>
+            {showFavButton && (
+              <UserFavButton onPress={handleFavClick}>
+                {favorited ? (
+                  <FavoriteFullIcon width="24" height="24" fill="#F00" />
+                ) : (
+                  <FavoriteIcon width="24" height="24" fill="#F00" />
+                )}
+              </UserFavButton>
+            )}
           </UserInfoArea>
 
           {loading && <LoadingIcon size="large" color="#000" />}
@@ -166,10 +172,13 @@ export default () => {
                 <ServiceItem key={key}>
                   <ServiceInfo>
                     <ServiceName>{item.name}</ServiceName>
-                    <ServicePrice>R$ {item.price}</ServicePrice>
+                    <ServicePrice>
+                      R$ {parseFloat(item.price).toFixed(2)}
+                    </ServicePrice>
                   </ServiceInfo>
 
-                  <ServiceChooseButton onPress={() => handleServiceChoose(key)}>
+                  <ServiceChooseButton
+                    onPress={() => handleServiceChoose(item, key)}>
                     <ServiceChooseButtonText>Agendar</ServiceChooseButtonText>
                   </ServiceChooseButton>
                 </ServiceItem>
@@ -212,6 +221,7 @@ export default () => {
         setShow={setShowModal}
         user={userInfo}
         service={selectedService}
+        serviceId={serviceId}
       />
     </Container>
   );
