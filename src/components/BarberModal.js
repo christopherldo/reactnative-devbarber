@@ -221,7 +221,7 @@ export default ({show, setShow, user, service, serviceId}) => {
         let availability = user.available.filter((e) => e.date === selDate);
 
         if (todayStringDate === selDate && availability.length > 0) {
-          setSelectedDay(todayDay);
+          setSelectedDay(Number(todayDay));
         }
 
         if (todayMonth === month && todayDay <= day) {
@@ -247,6 +247,7 @@ export default ({show, setShow, user, service, serviceId}) => {
 
   useEffect(() => {
     if (selectedDay > 0) {
+      console.log(selectedDay);
       let d = new Date(selectedYear, selectedMonth, selectedDay);
 
       let year = d.getFullYear();
@@ -487,12 +488,7 @@ export default ({show, setShow, user, service, serviceId}) => {
                 {listDays.map((item, key) => (
                   <DateItem
                     key={key}
-                    onPress={
-                      () => handleDateItem(item)
-                      // item.status &&
-                      // setSelectedDay(item.number))
-                      // this.setState({setFinishButtonActive: true})
-                    }
+                    onPress={() => handleDateItem(item)}
                     // eslint-disable-next-line react-native/no-inline-styles
                     style={{
                       backgroundColor:
@@ -501,20 +497,26 @@ export default ({show, setShow, user, service, serviceId}) => {
                     <DateItemWeekDay
                       style={
                         item.number === selectedDay
-                          ? {color: '#fff'}
+                          ? // eslint-disable-next-line react-native/no-inline-styles
+                            {color: '#fff'}
                           : item.status
-                          ? {color: '#000'}
-                          : {color: 'rgba(0, 0, 0, 0.2)'}
+                          ? // eslint-disable-next-line react-native/no-inline-styles
+                            {color: '#000'}
+                          : // eslint-disable-next-line react-native/no-inline-styles
+                            {color: 'rgba(0, 0, 0, 0.2)'}
                       }>
                       {item.weekday}
                     </DateItemWeekDay>
                     <DateItemNumber
                       style={
                         item.number === selectedDay
-                          ? {color: '#fff'}
+                          ? // eslint-disable-next-line react-native/no-inline-styles
+                            {color: '#fff'}
                           : item.status
-                          ? {color: '#000'}
-                          : {color: 'rgba(0, 0, 0, 0.2)'}
+                          ? // eslint-disable-next-line react-native/no-inline-styles
+                            {color: '#000'}
+                          : // eslint-disable-next-line react-native/no-inline-styles
+                            {color: 'rgba(0, 0, 0, 0.2)'}
                       }>
                       {item.number}
                     </DateItemNumber>

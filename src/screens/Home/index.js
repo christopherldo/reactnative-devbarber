@@ -132,7 +132,7 @@ export default () => {
             placeholderTextColor="#fff"
             value={locationText}
             onChangeText={(t) => setLocationText(t)}
-            onEndEditing={handleLocationSearch}
+            onSubmitEditing={handleLocationSearch}
           />
 
           <LocationFinder onPress={handleLocationFinder}>

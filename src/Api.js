@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
-const BASE_API = 'https://f7f8e9f1a8d4.ngrok.io';
+const BASE_API = 'https://1c24b4ad9cb7.ngrok.io';
 
 export default {
   checkToken: async () => {
@@ -157,6 +157,23 @@ export default {
         }),
       },
     );
+
+    const json = await req.json();
+
+    return json;
+  },
+
+  search: async (query) => {
+    const token = await AsyncStorage.getItem('token');
+
+    const req = await fetch(`${BASE_API}/search?q=${query}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     const json = await req.json();
 

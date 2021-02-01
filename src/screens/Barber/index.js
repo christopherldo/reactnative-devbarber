@@ -112,11 +112,6 @@ export default () => {
 
   return (
     <Container>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
-      />
       <Scroller>
         {userInfo.photos ? (
           <Swiper

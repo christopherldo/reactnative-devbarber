@@ -63,6 +63,7 @@ export const ListArea = styled.View`
 `;
 
 export const NoBarberAlert = styled.Text`
+  align-self: center;
   text-align: center;
   font-size: 20px;
   margin-top: 20px;
