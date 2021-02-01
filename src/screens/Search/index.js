@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import Api from '../../Api';
 
@@ -19,6 +19,7 @@ export default () => {
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState([]);
   const [showList, setShowList] = useState(true);
+  const [errorText, setErrorText] = useState('');
 
   const searchBarbers = async () => {
     setLoading(true);
@@ -43,6 +44,11 @@ export default () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    setErrorText(searchText);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showList]);
+
   return (
     <Container>
       <SearchArea>
@@ -65,7 +71,7 @@ export default () => {
             list.map((item, k) => <BarberItem key={k} data={item} />)
           ) : (
             <NoBarberAlert>
-              Nenhum barbeiro encontrado com os termos "{searchText}" :/
+              Nenhum barbeiro encontrado com os termos "{errorText}" :/
             </NoBarberAlert>
           )}
         </ListArea>

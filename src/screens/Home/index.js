@@ -36,8 +36,6 @@ export default () => {
   const handleLocationFinder = async () => {
     setLocationText('');
 
-    // console.log(city);
-
     let permission;
     let result;
 

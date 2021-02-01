@@ -247,7 +247,6 @@ export default ({show, setShow, user, service, serviceId}) => {
 
   useEffect(() => {
     if (selectedDay > 0) {
-      console.log(selectedDay);
       let d = new Date(selectedYear, selectedMonth, selectedDay);
 
       let year = d.getFullYear();
@@ -306,7 +305,7 @@ export default ({show, setShow, user, service, serviceId}) => {
             let newListDays = listDays;
 
             newListDays.map((item, key) => {
-              if (item.number === nowDay) {
+              if (item.number === Number(nowDay)) {
                 newListDays[key].status = false;
               }
               setSelectedDay(0);
@@ -496,7 +495,7 @@ export default ({show, setShow, user, service, serviceId}) => {
                     }}>
                     <DateItemWeekDay
                       style={
-                        item.number === selectedDay
+                        item.number === selectedDay && listHours.length > 0
                           ? // eslint-disable-next-line react-native/no-inline-styles
                             {color: '#fff'}
                           : item.status
