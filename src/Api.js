@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
-const BASE_API = 'https://0ea7574c0a52.ngrok.io';
+const BASE_API = 'https://141362887fc7.ngrok.io';
 
 export default {
   checkToken: async () => {
@@ -201,6 +201,29 @@ export default {
     const token = await AsyncStorage.getItem('token');
 
     const req = await fetch(`${BASE_API}/user/appointments?now=${now}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const json = await req.json();
+
+    return json;
+  },
+
+  read: async (id = null) => {
+    const token = await AsyncStorage.getItem('token');
+
+    let link = `${BASE_API}/user/`;
+
+    if (id) {
+      link += id;
+    }
+
+    const req = await fetch(link, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

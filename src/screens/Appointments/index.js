@@ -9,7 +9,6 @@ import {
   HeaderArea,
   HeaderTitle,
   Scroller,
-  LoadingIcon,
   ListArea,
   NoBarberAlert,
 } from './styles';
@@ -27,10 +26,9 @@ export default () => {
     getAppointments();
   }, [isFocused]);
 
-  const getAppointments = async (resetList = false) => {
-    if (resetList) {
-      setList([]);
-    }
+  const getAppointments = async () => {
+    setLoading(true);
+    setList([]);
 
     setShowList(true);
 
@@ -83,8 +81,7 @@ export default () => {
   };
 
   const onRefresh = () => {
-    setLoading(true);
-    getAppointments(true);
+    getAppointments();
   };
 
   return (
