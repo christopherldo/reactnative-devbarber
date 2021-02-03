@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
-const BASE_API = 'https://141362887fc7.ngrok.io';
+const BASE_API = 'https://1213f5334237.ngrok.io';
 
 export default {
   checkToken: async () => {
@@ -230,6 +230,50 @@ export default {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
+    });
+
+    const json = await req.json();
+
+    return json;
+  },
+
+  update: async (name, email, phone, password, password_confirmation) => {
+    const token = await AsyncStorage.getItem('token');
+
+    const req = await fetch(`${BASE_API}/user`, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        password,
+        password_confirmation,
+        token,
+      }),
+    });
+
+    const json = await req.json();
+
+    return json;
+  },
+
+  updateAvatar: async (file) => {
+    const token = await AsyncStorage.getItem('token');
+
+    let data = new FormData();
+    data.append('avatar', file);
+
+    const req = await fetch(`${BASE_API}/user/avatar?token=${token}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data; ',
+      },
+      body: data,
     });
 
     const json = await req.json();

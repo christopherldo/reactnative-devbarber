@@ -36,8 +36,12 @@ export default () => {
 
   const isFocused = useIsFocused();
 
-  const handleScreenClick = (screenName) => {
-    navigation.navigate(screenName, info);
+  const handleScreenClick = (screenName, userInfo = null) => {
+    if (userInfo) {
+      navigation.navigate(screenName, info);
+    } else {
+      navigation.navigate(screenName);
+    }
   };
 
   const handleLogoutClick = async () => {
@@ -59,6 +63,7 @@ export default () => {
 
     if (res.error === '') {
       res.info.name = res.info.name.split(' ');
+      res.info.avatar += `?${Date.now()}`;
 
       setInfo(res.info);
     } else {
@@ -142,7 +147,7 @@ export default () => {
             </Option>
 
             {info && (
-              <Option onPress={() => handleScreenClick('Account')}>
+              <Option onPress={() => handleScreenClick('Account', info)}>
                 <ProfileIcon width="30" height="30" fill="#63c2d1" />
                 <OptionText>Configurações da Conta</OptionText>
               </Option>

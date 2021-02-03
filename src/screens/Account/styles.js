@@ -7,14 +7,26 @@ export const Container = styled.SafeAreaView`
   padding-top: ${StatusBar.currentHeight}px;
 `;
 
-export const ProfileArea = styled.View`
-  flex: 1;
-  margin: 20px;
-  border-radius: 20px;
-  justify-content: center;
+export const SafeArea = styled.View`
+  padding: 0 20px;
 `;
 
-export const Scroller = styled.ScrollView`
+export const AccountHeader = styled.View`
+  padding: 20px 0;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const BackButton = styled.TouchableOpacity``;
+
+export const HeaderText = styled.Text`
+  flex: 1;
+  font-size: 18px;
+  padding: 0 20px;
+  color: #fff;
+`;
+
+export const InfoArea = styled.ScrollView`
   background-color: #fff;
   padding: 20px;
   border-radius: 20px;
@@ -26,10 +38,18 @@ export const UserHeader = styled.View`
   align-items: center;
 `;
 
+export const UserAvatar = styled.TouchableOpacity`
+  width: 80px;
+  height: 80px;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const Avatar = styled.Image`
   width: 80px;
   height: 80px;
   border-radius: 20px;
+  opacity: 0.3;
 `;
 
 export const Name = styled.Text`
@@ -66,7 +86,7 @@ export const OptionsArea = styled.View`
   padding: 20px;
 `;
 
-export const Top = styled.TouchableOpacity`
+export const Top = styled.View`
   flex: 1;
   flex-direction: row;
   align-items: center;
@@ -75,7 +95,7 @@ export const Top = styled.TouchableOpacity`
   border-top-width: 0px;
 `;
 
-export const Option = styled.TouchableOpacity`
+export const Option = styled.View`
   flex: 1;
   flex-direction: row;
   align-items: center;
@@ -85,8 +105,28 @@ export const Option = styled.TouchableOpacity`
   border-color: #63c2d1;
 `;
 
-export const OptionText = styled.Text`
+export const OptionName = styled.Text`
+  width: 100px;
+`;
+
+export const OptionInput = styled.TextInput`
   flex: 1;
   margin-left: 10px;
   font-size: 16px;
+  border-bottom-width: 1px;
+  border-color: rgba(0, 0, 0, 0.2);
+  padding: 5px;
+`;
+
+export const SubmitButton = styled.TouchableOpacity`
+  background-color: rgba(38, 133, 150, 1);
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 20px;
+`;
+
+export const SubmitButtonText = styled.Text`
+  text-align: center;
+  color: #fff;
+  font-size: 18px;
 `;
